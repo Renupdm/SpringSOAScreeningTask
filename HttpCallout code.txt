@@ -1,0 +1,24 @@
+public class HttpCalloutExample {
+
+    public static void makeHttpCallout() {
+        // Define the HTTP request
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint('https://jsonplaceholder.typicode.com/posts/1'); // Replace with your API endpoint
+        req.setMethod('GET');
+        
+        // Create an HTTP instance
+        Http http = new Http();
+        
+        // Send the request and receive the response
+        HttpResponse res = http.send(req);
+        
+        // Check if the request was successful (status code 200)
+        if (res.getStatusCode() == 200) {
+            // Print the response body
+            String responseBody = res.getBody();
+            System.debug('HTTP Response: ' + responseBody);
+        } else {
+            System.debug('HTTP Request failed with status code: ' + res.getStatusCode());
+        }
+    }
+}

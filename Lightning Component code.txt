@@ -1,0 +1,68 @@
+Lightning Component (recentAccounts.cmp):
+html
+
+<aura:component controller="AccountController">
+    <aura:attribute name="accounts" type="Account[]" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+            <tr class="slds-line-height_reset">
+                <th class="slds-text-title_caps">Account Name</th>
+                <th class="slds-text-title_caps">Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.accounts}" var="account">
+                <tr>
+                    <td>{!account.Name}</td>
+                    <td>{!account.CreatedDate}</td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+</aura:component>
+
+==============================
+
+Lightning Component Controller (recentAccountsController.js):
+javascriptCopy code
+
+
+({
+    doInit : function(component, event, helper) {
+        var action = component.get("c.getRecentAccounts");
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                component.set("v.accounts", response.getReturnValue());
+            }
+        });
+        $A.enqueueAction(action);
+    }
+})
+
+
+=================================
+
+Apex Controller (AccountController.cls):
+java
+
+public with sharing class AccountController {
+    @AuraEnabled
+    public static List<Account> getRecentAccounts() {
+        return [SELECT Name, CreatedDate FROM Account ORDER BY CreatedDate DESC LIMIT 10];
+    }
+}
+
+===================================
+
+Lightning App (recentAccountsApp.app):
+
+
+<aura:application extends="force:slds">
+    <c:recentAccounts />
+</aura:application>
+
+
